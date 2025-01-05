@@ -2,17 +2,25 @@ import React from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import './index.css';
 import Home from './pages/homepage.tsx';
-import Dashboard from './pages/dashboard.tsx';
-import LoanApplication from './pages/loanapplication.tsx';
-import LoanDetails from './pages/loandetails.tsx';
-import TransactionHistory from './pages/transactionhistory.tsx';
-import Repayment from './pages/repayment.tsx';
-import AdminDashboard from './pages/admindashboard.tsx';
-import LoanReview from './pages/loanreview.tsx';
+import Dashboard from './pages/users/dashboard.tsx';
+import LoanApplication from './pages/users/loanapplication.tsx';
+import LoanDetails from './pages/users/loandetails.tsx';
+import TransactionHistory from './pages/users/transactionhistory.tsx';
+import Repayment from './pages/users/repayment.tsx';
+import AdminDashboard from './pages/admin/admindashboard.tsx';
+import LoanReview from './pages/admin/loanreview.tsx';
+import LoginForm from './components/loginform.tsx';
+import RegistrationForm from './components/registrationform.tsx';
+import UserLoans from './pages/admin/userloans.tsx';
+import Header from './components/header.tsx';
+
 
 const App: React.FC = () => {
   return (
     <BrowserRouter>
+      <div className="min-h-screen bg-gray-50">
+      <Header />
+      <main>
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/dashboard" element={<Dashboard />} />
@@ -22,7 +30,12 @@ const App: React.FC = () => {
         <Route path="/repayment" element={<Repayment />} />
         <Route path="/admin" element={<AdminDashboard />} />
         <Route path="/admin/loan-review/:id" element={<LoanReview />} />
+        <Route path="/admin/userloans" element={<UserLoans />} />
+        <Route path="/login" element={<LoginForm />} />
+        <Route path="/register" element={<RegistrationForm />} />
       </Routes>
+      </main>
+      </div>
     </BrowserRouter>
   );
 };

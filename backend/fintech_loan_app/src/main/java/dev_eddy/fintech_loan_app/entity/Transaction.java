@@ -1,6 +1,5 @@
 package dev_eddy.fintech_loan_app.entity;
-
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity

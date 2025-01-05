@@ -1,20 +1,24 @@
 package dev_eddy.fintech_loan_app.entity;
-import javax.persistence.*;
-import java.util.Set;
+
+import jakarta.persistence.*;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
 
 @Entity
-@Table(name = "role")
+@Table(name = "roles")
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class Role {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String roleName; // e.g., USER, ADMIN, MANAGER
-    private String permissions; // A JSON or text field to store role-based access control
+    @Column(nullable = false, unique = true)
+    private String name;
 
-    @ManyToMany(mappedBy = "roles")
-    private Set<User> users;
-
-    // Getters and setters
+    @Column
+    private String description;
 }

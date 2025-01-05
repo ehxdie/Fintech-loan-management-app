@@ -1,10 +1,10 @@
 package dev_eddy.fintech_loan_app.entity;
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.util.Set;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "user")
+@Table(name = "users")
 public class User {
 
     @Id
