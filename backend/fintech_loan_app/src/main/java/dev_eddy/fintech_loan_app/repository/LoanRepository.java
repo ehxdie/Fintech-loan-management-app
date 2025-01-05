@@ -10,5 +10,7 @@ import java.util.List;
 @Repository
 public interface LoanRepository extends JpaRepository<Loan, Long> {
     // You can add custom query methods if needed
+    List<Loan> findByUserId(Long userId);
 
+    List<Loan> findByStatus(String status);
 }

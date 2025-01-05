@@ -1,42 +1,21 @@
-package dev_eddy.fintech_loan_app.entity;
-import jakarta.persistence.*;
+package dev_eddy.fintech_loan_app.dtos;
+
 import java.time.LocalDateTime;
 
-@Entity
-@Table(name = "transactions")
-public class Transaction {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+
+public class TransactionDTO {
     private Long id;
-
-    @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
-
-    @ManyToOne
-    @JoinColumn(name = "loan_id", nullable = false)
-    private Loan loan;
-
+    private Long userId;
+    private Long loanId;
     private String transactionType;
     private Double amount;
     private LocalDateTime transactionDate;
     private String status;
-
-    @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
-
-    @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
-    @PrePersist
-    protected void onCreate() {
-        createdAt = LocalDateTime.now();
-        updatedAt = LocalDateTime.now();
-    }
-
-    @PreUpdate
-    protected void onUpdate() {
-        updatedAt = LocalDateTime.now();
+    // Constructor
+    public TransactionDTO() {
     }
 
     // Getters and Setters
@@ -48,20 +27,20 @@ public class Transaction {
         this.id = id;
     }
 
-    public User getUser() {
-        return user;
+    public Long getUserId() {
+        return userId;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setUserId(Long userId) {
+        this.userId = userId;
     }
 
-    public Loan getLoan() {
-        return loan;
+    public Long getLoanId() {
+        return loanId;
     }
 
-    public void setLoan(Loan loan) {
-        this.loan = loan;
+    public void setLoanId(Long loanId) {
+        this.loanId = loanId;
     }
 
     public String getTransactionType() {
@@ -100,7 +79,15 @@ public class Transaction {
         return createdAt;
     }
 
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
     public LocalDateTime getUpdatedAt() {
         return updatedAt;
+    }
+
+    public void setUpdatedAt(LocalDateTime updatedAt) {
+        this.updatedAt = updatedAt;
     }
 }
