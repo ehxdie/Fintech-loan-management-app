@@ -13,30 +13,38 @@ import LoginForm from './components/loginform.tsx';
 import RegistrationForm from './components/registrationform.tsx';
 import UserLoans from './pages/admin/userloans.tsx';
 import Header from './components/header.tsx';
-
+import { AuthProvider } from './contexts/AuthContext.tsx';
+import { LoanProvider } from './contexts/LoanContext.tsx';
+import { TransactionProvider } from './contexts/TransactionContext.tsx';
 
 const App: React.FC = () => {
   return (
-    <BrowserRouter>
-      <div className="min-h-screen bg-gray-50">
-      <Header />
-      <main>
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/loan-application" element={<LoanApplication />} />
-        <Route path="/loan-details/:id" element={<LoanDetails />} />
-        <Route path="/transactions" element={<TransactionHistory />} />
-        <Route path="/repayment" element={<Repayment />} />
-        <Route path="/admin" element={<AdminDashboard />} />
-        <Route path="/admin/loan-review/:id" element={<LoanReview />} />
-        <Route path="/admin/userloans" element={<UserLoans />} />
-        <Route path="/login" element={<LoginForm />} />
-        <Route path="/register" element={<RegistrationForm />} />
-      </Routes>
-      </main>
-      </div>
-    </BrowserRouter>
+    <AuthProvider>
+      <LoanProvider>
+        <TransactionProvider>
+          <BrowserRouter>
+            <div className="min-h-screen bg-gray-50">
+              <Header />
+              <main>
+                <Routes>
+                  <Route path="/" element={<Home />} />
+                  <Route path="/dashboard" element={<Dashboard />} />
+                  <Route path="/loan-application" element={<LoanApplication />} />
+                  <Route path="/loan-details/:id" element={<LoanDetails />} />
+                  <Route path="/transactions" element={<TransactionHistory />} />
+                  <Route path="/repayment" element={<Repayment />} />
+                  <Route path="/admin" element={<AdminDashboard />} />
+                  <Route path="/admin/loan-review/:id" element={<LoanReview />} />
+                  <Route path="/admin/userloans" element={<UserLoans />} />
+                  <Route path="/login" element={<LoginForm />} />
+                  <Route path="/register" element={<RegistrationForm />} />
+                </Routes>
+              </main>
+            </div>
+          </BrowserRouter>
+        </TransactionProvider>
+      </LoanProvider>
+    </AuthProvider>
   );
 };
 

@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Search, Filter } from 'lucide-react';
+import { loanAPI } from '../../services/api.ts';
 
 interface LoanRecord {
   id: number;
@@ -22,37 +23,25 @@ const UserLoans: React.FC = () => {
     const [searchQuery, setSearchQuery] = useState('');
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 10;
+    const [loans, setLoans] = useState<LoanRecord[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
 
-    // Dummy data - would come from API
-    const loans: LoanRecord[] = [
-        {
-            id: 1,
-            userId: 1,
-            applicant: 'John Doe',
-            email: 'john@example.com',
-            amount: 50000,
-            purpose: 'Business Expansion',
-            status: 'PENDING',
-            applicationDate: '2024-03-15',
-            creditScore: 720,
-            interestRate: 15,
-            tenure: 12
-        },
-        {
-            id: 2,
-            userId: 2,
-            applicant: 'Jane Smith',
-            email: 'jane@example.com',
-            amount: 25000,
-            purpose: 'Education',
-            status: 'APPROVED',
-            applicationDate: '2024-03-14',
-            creditScore: 680,
-            interestRate: 12,
-            tenure: 6
-        },
-        // Add more dummy data...
-    ];
+    useEffect(() => {
+        const fetchLoans = async () => {
+            try {
+                const response = await loanAPI.getAllLoans();
+                setLoans(response.data);
+            } catch (err) {
+                setError('Failed to fetch loans');
+                console.error(err);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchLoans();
+    }, []);
 
     const filteredLoans = loans.filter(loan => {
         const matchesStatus = statusFilter === 'all' || loan.status === statusFilter;
@@ -66,6 +55,9 @@ const UserLoans: React.FC = () => {
         (currentPage - 1) * itemsPerPage,
         currentPage * itemsPerPage
     );
+
+    if (loading) return <div>Loading...</div>;
+    if (error) return <div>Error: {error}</div>;
 
     return (
         <div className="min-h-screen bg-gray-50 p-6">

@@ -9,7 +9,7 @@ public class UserDTO {
     private String name;
     private String email;
     private String phoneNumber;
-    private Set<String> roles;
+    private String roles;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
@@ -50,11 +50,11 @@ public class UserDTO {
         this.phoneNumber = phoneNumber;
     }
 
-    public Set<String> getRoles() {
+    public String getRoles() {
         return roles;
     }
 
-    public void setRoles(Set<String> roles) {
+    public void setRoles(String roles) {
         this.roles = roles;
     }
 

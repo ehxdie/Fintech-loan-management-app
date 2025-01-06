@@ -1,6 +1,7 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom'
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip } from 'recharts'
+import { loanAPI, transactionAPI } from '../../services/api.ts';
 
 interface Loan {
   id: number;
@@ -14,63 +15,59 @@ interface Loan {
 }
 
 const AdminDashboard: React.FC = () => {
-  const navigate = useNavigate()
+  const navigate = useNavigate();
+  const [stats, setStats] = useState({
+    totalLoans: 0,
+    pendingApprovals: 0,
+    totalDisbursed: '0',
+    repaymentRate: '0%'
+  });
+  const [pendingLoans, setPendingLoans] = useState<Loan[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  // Dummy data for admin dashboard
-  const stats = {
-    totalLoans: 150,
-    pendingApprovals: 25,
-    totalDisbursed: '$2,500,000',
-    repaymentRate: '85%'
-  }
+  useEffect(() => {
+    const fetchDashboardData = async () => {
+      try {
+        const [loansResponse] = await Promise.all([
+          loanAPI.getAllLoans()
+        ]);
 
-  const pendingLoans: Loan[] = [
-    {
-      id: 1,
-      userId: 1,
-      amount: 50000,
-      tenure: 12,
-      purpose: 'Business Expansion',
-      status: 'PENDING',
-      applicationDate: '2024-03-15',
-      interestRate: 15
-    },
-    {
-      id: 2,
-      userId: 2,
-      amount: 25000,
-      tenure: 6,
-      purpose: 'Equipment Purchase',
-      status: 'PENDING',
-      applicationDate: '2024-03-14',
-      interestRate: 12
-    }
-  ]
+        const loans = loansResponse.data;
+        const pendingLoans = loans.filter(loan => loan.status === 'PENDING');
+        const approvedLoans = loans.filter(loan => loan.status === 'APPROVED');
+        
+        setStats({
+          totalLoans: loans.length,
+          pendingApprovals: pendingLoans.length,
+          totalDisbursed: `$${approvedLoans.reduce((sum, loan) => sum + loan.amount, 0).toLocaleString()}`,
+          repaymentRate: '85%' // This would ideally come from a specific API endpoint
+        });
+        
+        setPendingLoans(pendingLoans);
+      } catch (err) {
+        setError('Failed to fetch dashboard data');
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  const recentDisbursements = [
-    {
-      id: 1,
-      userId: 3,
-      amount: 35000,
-      disbursementDate: '2024-03-13',
-      status: 'DISBURSED',
-      transactionId: 'TRX123'
-    },
-    {
-      id: 2,
-      userId: 4,
-      amount: 45000,
-      disbursementDate: '2024-03-12',
-      status: 'DISBURSED',
-      transactionId: 'TRX124'
-    }
-  ]
+    fetchDashboardData();
+  }, []);
 
   const repaymentData = [
-    { month: 'Jan', onTime: 85, late: 15 },
-    { month: 'Feb', onTime: 90, late: 10 },
-    { month: 'Mar', onTime: 88, late: 12 }
-  ]
+    { month: 'Jan', onTime: 4000, late: 2400 },
+    { month: 'Feb', onTime: 3000, late: 1398 },
+    { month: 'Mar', onTime: 2000, late: 9800 },
+    { month: 'Apr', onTime: 2780, late: 3908 },
+    { month: 'May', onTime: 1890, late: 4800 },
+    { month: 'Jun', onTime: 2390, late: 3800 },
+    { month: 'Jul', onTime: 3490, late: 4300 },
+  ];
+
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div>Error: {error}</div>;
 
   return (
     <div className="min-h-screen bg-gray-50 p-6">

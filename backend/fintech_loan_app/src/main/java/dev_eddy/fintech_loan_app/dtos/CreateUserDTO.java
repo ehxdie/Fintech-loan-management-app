@@ -22,7 +22,7 @@ public class CreateUserDTO {
     @Size(min = 6, message = "Password must be at least 6 characters long")
     private String password;
 
-    private Set<String> roles;
+    private String roles = "USER"; // Set default role
 
     // Getters and Setters
     public String getName() {
@@ -57,11 +57,11 @@ public class CreateUserDTO {
         this.password = password;
     }
 
-    public Set<String> getRoles() {
+    public String getRoles() {
         return roles;
     }
 
-    public void setRoles(Set<String> roles) {
+    public void setRoles(String roles) {
         this.roles = roles;
     }
 }

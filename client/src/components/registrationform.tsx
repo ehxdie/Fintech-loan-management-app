@@ -8,7 +8,7 @@ const RegistrationForm: React.FC = () => {
     email: '',
     phoneNumber: '',
     password: '',
-    role: 'User'
+    role: ' '
   });
 
   const [error, setError] = useState<string | null>(null);
@@ -32,6 +32,7 @@ const RegistrationForm: React.FC = () => {
     try {
       await registerUser(formData);
       alert('Registration Successful!');
+      setError('Registration Successful')
     } catch (err) {
       console.error(err);
       setError('Registration failed. Please try again.');

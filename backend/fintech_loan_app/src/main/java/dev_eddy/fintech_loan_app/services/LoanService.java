@@ -2,6 +2,7 @@ package dev_eddy.fintech_loan_app.services;
 
 import dev_eddy.fintech_loan_app.dtos.CreateLoanDTO;
 import dev_eddy.fintech_loan_app.dtos.LoanDTO;
+import dev_eddy.fintech_loan_app.dtos.UserDTO;
 import dev_eddy.fintech_loan_app.entity.Loan;
 import dev_eddy.fintech_loan_app.entity.User;
 import dev_eddy.fintech_loan_app.exceptions.LoanNotFoundException;
@@ -55,6 +56,12 @@ public class LoanService {
         Loan loan = loanRepository.findById(id)
             .orElseThrow(() -> new LoanNotFoundException("Loan not found with id: " + id));
         return loanMapper.toDTO(loan);
+    }
+
+     public List<LoanDTO> getAllLoans() {
+        return loanRepository.findAll().stream()
+                .map(loanMapper::toDTO)
+                .collect(Collectors.toList());
     }
 
     public List<LoanDTO> getUserLoans(Long userId) {

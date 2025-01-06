@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import { loanAPI } from '../../services/api.ts';
 
 interface LoanApplication {
   id: number;
@@ -38,44 +39,42 @@ const LoanReview: React.FC = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [reviewNote, setReviewNote] = useState('');
+  const [loanApplication, setLoanApplication] = useState<LoanApplication | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  // Dummy data - would come from API
-  const loanApplication: LoanApplication = {
-    id: 1,
-    applicant: {
-      id: 1,
-      name: 'John Doe',
-      email: 'john@example.com',
-      phone: '+234123456789',
-      monthlyIncome: 5000,
-      creditScore: 720
-    },
-    loanDetails: {
-      amount: 50000,
-      tenure: 12,
-      purpose: 'Business Expansion',
-      interestRate: 15,
-      monthlyPayment: 4500,
-      applicationDate: '2024-03-15',
-      status: 'PENDING'
-    },
-    documents: [
-      { id: 1, name: 'Bank Statement', status: 'VERIFIED', url: '/documents/bank-statement.pdf' },
-      { id: 2, name: 'ID Verification', status: 'VERIFIED', url: '/documents/id-verification.pdf' },
-      { id: 3, name: 'Proof of Income', status: 'PENDING', url: '/documents/income-proof.pdf' }
-    ],
-    riskMetrics: {
-      debtToIncome: 35,
-      creditUtilization: 45,
-      riskScore: 75
+  useEffect(() => {
+    const fetchLoanDetails = async () => {
+      try {
+        if (!id) return;
+        const response = await loanAPI.getLoanById(id);
+        setLoanApplication(response.data);
+      } catch (err) {
+        setError('Failed to fetch loan details');
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchLoanDetails();
+  }, [id]);
+
+  const handleStatusUpdate = async (status: 'APPROVED' | 'REJECTED') => {
+    try {
+      if (!id) return;
+      await loanAPI.updateLoanStatus(id, status);
+      toast.success(`Loan ${status.toLowerCase()}`);
+      navigate('/admin/userloans');
+    } catch (err) {
+      toast.error('Failed to update loan status');
+      console.error(err);
     }
   };
 
-  const handleStatusUpdate = (status: 'APPROVED' | 'REJECTED') => {
-    // API call would go here
-    toast.success(`Loan ${status.toLowerCase()}`);
-    navigate('/admin');
-  };
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div>Error: {error}</div>;
+  if (!loanApplication) return <div>No loan data found</div>;
 
   return (
     <div className="min-h-screen bg-gray-50 p-6">

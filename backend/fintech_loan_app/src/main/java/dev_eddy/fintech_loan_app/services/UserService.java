@@ -35,6 +35,11 @@ public class UserService  {
 
         User user = userMapper.toEntity(createUserDTO);
         user.setPassword(createUserDTO.getPassword());
+        
+        // Ensure roles are set
+        if (user.getRoles() == null || user.getRoles().isEmpty()) {
+            user.setRoles("USER");
+        }
 
         User savedUser = userRepository.save(user);
         return userMapper.toDTO(savedUser);

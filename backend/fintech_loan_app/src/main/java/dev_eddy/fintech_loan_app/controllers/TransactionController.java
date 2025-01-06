@@ -1,8 +1,10 @@
-package dev_eddy.fintech_loan_app.controllers;
+ package dev_eddy.fintech_loan_app.controllers;
 
 import dev_eddy.fintech_loan_app.dtos.TransactionDTO;
 import dev_eddy.fintech_loan_app.dtos.CreateTransactionDTO;
 import dev_eddy.fintech_loan_app.services.TransactionService;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -10,6 +12,7 @@ import jakarta.validation.Valid;
 import java.util.List;
 
 @RestController
+@CrossOrigin
 @RequestMapping("/api/transactions")
 public class TransactionController {
 

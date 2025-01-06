@@ -2,14 +2,17 @@ package dev_eddy.fintech_loan_app.controllers;
 
 import dev_eddy.fintech_loan_app.dtos.CreateLoanDTO;
 import dev_eddy.fintech_loan_app.dtos.LoanDTO;
+import dev_eddy.fintech_loan_app.dtos.UserDTO;
 import dev_eddy.fintech_loan_app.services.LoanService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
 import jakarta.validation.Valid;
 import java.util.List;
 
 @RestController
+@CrossOrigin
 @RequestMapping("/api/loans")
 public class LoanController {
     
@@ -24,6 +27,12 @@ public class LoanController {
     public ResponseEntity<LoanDTO> createLoan(@Valid @RequestBody CreateLoanDTO createLoanDTO) {
         LoanDTO newLoan = loanService.createLoan(createLoanDTO);
         return new ResponseEntity<>(newLoan, HttpStatus.CREATED);
+    }
+
+    @GetMapping
+    public ResponseEntity<List<LoanDTO>> getAllLoans() {
+        List<LoanDTO> loans = loanService.getAllLoans();
+        return ResponseEntity.ok(loans);
     }
     
     @GetMapping("/{id}")
