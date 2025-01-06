@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 import dev_eddy.fintech_loan_app.entity.Transaction;
 import dev_eddy.fintech_loan_app.entity.Loan;
 import dev_eddy.fintech_loan_app.entity.User;
-import java.util.stream.Collectors;
+
 
 
 @Component

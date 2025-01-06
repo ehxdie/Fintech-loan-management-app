@@ -8,8 +8,6 @@ import dev_eddy.fintech_loan_app.exceptions.ResourceNotFoundException;
 import dev_eddy.fintech_loan_app.exceptions.EmailAlreadyExistsException;
 import dev_eddy.fintech_loan_app.repository.UserRepository;
 import dev_eddy.fintech_loan_app.mappers.UserMapper;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
@@ -17,18 +15,18 @@ import java.util.stream.Collectors;
 
 @Service
 @Transactional
-public class UserService {
+public class UserService  {
 
     private final UserRepository userRepository;
     private final UserMapper userMapper;
-    private final PasswordEncoder passwordEncoder;
 
-    @Autowired
-    public UserService(UserRepository userRepository, UserMapper userMapper, PasswordEncoder passwordEncoder) {
+
+    public UserService(UserRepository userRepository, UserMapper userMapper) {
         this.userRepository = userRepository;
         this.userMapper = userMapper;
-        this.passwordEncoder = passwordEncoder;
+
     }
+
 
     public UserDTO createUser(CreateUserDTO createUserDTO) {
         if (userRepository.existsByEmail(createUserDTO.getEmail())) {
@@ -36,7 +34,7 @@ public class UserService {
         }
 
         User user = userMapper.toEntity(createUserDTO);
-        user.setPassword(passwordEncoder.encode(createUserDTO.getPassword()));
+        user.setPassword(createUserDTO.getPassword());
 
         User savedUser = userRepository.save(user);
         return userMapper.toDTO(savedUser);
@@ -69,7 +67,7 @@ public class UserService {
         user.setPhoneNumber(updateUserDTO.getPhoneNumber());
 
         if (updateUserDTO.getPassword() != null && !updateUserDTO.getPassword().isEmpty()) {
-            user.setPassword(passwordEncoder.encode(updateUserDTO.getPassword()));
+            user.setPassword(updateUserDTO.getPassword());
         }
 
         User updatedUser = userRepository.save(user);

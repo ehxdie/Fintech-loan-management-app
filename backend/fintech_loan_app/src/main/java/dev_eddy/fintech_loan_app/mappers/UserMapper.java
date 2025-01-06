@@ -26,7 +26,7 @@ public class UserMapper {
 
         if (user.getRoles() != null) {
             dto.setRoles(user.getRoles().stream()
-                    .map(Role::getName)
+                    .map(Role::getRole)
                     .collect(Collectors.toSet()));
         }
 

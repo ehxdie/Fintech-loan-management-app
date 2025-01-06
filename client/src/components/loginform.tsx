@@ -17,9 +17,9 @@ const LoginForm: React.FC = () => {
 
       console.log(response);
 
-      if (response.roles == 'Admin') {
+      if (response.data.roles == 'Admin') {
         navigate("/admin");
-      } else if (response.roles == 'User') {
+      } else if (response.data.roles == 'User') {
         navigate("/dashboard");
       } else {
         alert('Role not recognized. Please contact support.');
