@@ -69,7 +69,11 @@ cd fintech-loan-management-app
 2. Setup Backend
 ```bash
 cd backend/fintech_loan_app
+<<<<<<< HEAD
 mvn clean install
+=======
+mvn install
+>>>>>>> Add Docker Compose configuration and update README; modify .gitignore and header role handling
 mvn spring-boot:run
 ```
 
@@ -113,12 +117,20 @@ npm test
 ### Backend Deployment
 1. Build the JAR file
 ```bash
+<<<<<<< HEAD
 mvn clean install
+=======
+mvn clean package
+>>>>>>> Add Docker Compose configuration and update README; modify .gitignore and header role handling
 ```
 
 2. Run the application
 ```bash
+<<<<<<< HEAD
 mvn spring-boot:run
+=======
+java -jar target/fintech_loan_app-0.0.1-SNAPSHOT.jar
+>>>>>>> Add Docker Compose configuration and update README; modify .gitignore and header role handling
 ```
 
 ### Frontend Deployment
@@ -126,10 +138,15 @@ mvn spring-boot:run
 ```bash
 npm run build
 ```
+<<<<<<< HEAD
 2. Run the application
 ```bash
 npm run start
 ```
+=======
+
+2. Deploy the contents of the `build` folder to your web server
+>>>>>>> Add Docker Compose configuration and update README; modify .gitignore and header role handling
 
 ## API Documentation
 
@@ -153,3 +170,11 @@ Key endpoints:
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
+<<<<<<< HEAD
+=======
+## Acknowledgments
+
+- Spring Boot team for the excellent framework
+- React team for the frontend framework
+- All contributors who participate in this project
+>>>>>>> Add Docker Compose configuration and update README; modify .gitignore and header role handling

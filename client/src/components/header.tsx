@@ -11,10 +11,10 @@ const Header: React.FC = () => {
     // Example user data - would come from auth context
     const user = {
         name: 'John Doe',
-        role: 'ADMIN' // or 'ADMIN'
+        role: 'Admin' // or 'ADMIN'
     };
 
-    const navLinks = user.role === 'ADMIN' ? [
+    const navLinks = user.role === 'Admin' ? [
         { path: '/admin', label: 'Dashboard' },
         { path: '/admin/userloans', label: 'Loan Applications' },
     

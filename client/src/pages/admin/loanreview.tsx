@@ -21,13 +21,30 @@ interface Loan {
   updatedAt: string; // ISO string for LocalDateTime
 }
 
-
+// Mock data
+const mockLoan: Loan = {
+  id: 1,
+  userId: 1,
+  amount: 50000,
+  tenure: 12,
+  interestRate: 15.0,
+  status: 'PENDING',
+  appliedAt: new Date().toISOString(),
+  approvedAt: null,
+  repaidAt: null,
+  nextPaymentDate: null,
+  remainingBalance: 50000,
+  monthlyPayment: 4500,
+  purpose: 'Business Expansion',
+  createdAt: new Date().toISOString(),
+  updatedAt: new Date().toISOString()
+};
 
 const LoanReview: React.FC = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [reviewNote, setReviewNote] = useState('');
-  const [loanApplication, setLoanApplication] = useState<LoanApplication | null>(null);
+  const [loan, setLoan] = useState<Loan | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -36,10 +53,11 @@ const LoanReview: React.FC = () => {
       try {
         if (!id) return;
         const response = await loanAPI.getLoanById(id);
-        setLoanApplication(response.data);
+        setLoan(response.data);
       } catch (err) {
-        setError('Failed to fetch loan details');
-        console.error(err);
+        console.error('Error fetching loan:', err);
+        setError('Using mock data - API call failed');
+        setLoan(mockLoan);
       } finally {
         setLoading(false);
       }
@@ -61,42 +79,25 @@ const LoanReview: React.FC = () => {
   };
 
   if (loading) return <div>Loading...</div>;
-  if (error) return <div>Error: {error}</div>;
-  if (!loanApplication) return <div>No loan data found</div>;
+  if (!loan) return <div>No loan data found</div>;
 
   return (
     <div className="min-h-screen bg-gray-50 p-6">
       <div className="max-w-4xl mx-auto">
+        {error && (
+          <div className="mb-4 p-4 bg-yellow-50 border border-yellow-200 rounded-lg text-yellow-800">
+            {error}
+          </div>
+        )}
+
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-2xl font-bold text-gray-800">Loan Application Review</h1>
-          <span className="px-4 py-2 bg-yellow-100 text-yellow-800 rounded-full text-sm font-medium">
-            Pending Review
+          <span className={`px-4 py-2 rounded-full text-sm font-medium ${loan.status === 'PENDING' ? 'bg-yellow-100 text-yellow-800' :
+              loan.status === 'APPROVED' ? 'bg-green-100 text-green-800' :
+                'bg-red-100 text-red-800'
+            }`}>
+            {loan.status}
           </span>
-        </div>
-
-        {/* Applicant Information */}
-        <div className="bg-white rounded-lg shadow mb-6">
-          <div className="p-6 border-b">
-            <h2 className="text-xl font-semibold">Applicant Information</h2>
-          </div>
-          <div className="p-6 grid grid-cols-2 gap-4">
-            <div>
-              <p className="text-sm text-gray-500">Name</p>
-              <p className="font-medium">{loanApplication.applicant.name}</p>
-            </div>
-            <div>
-              <p className="text-sm text-gray-500">Email</p>
-              <p className="font-medium">{loanApplication.applicant.email}</p>
-            </div>
-            <div>
-              <p className="text-sm text-gray-500">Phone</p>
-              <p className="font-medium">{loanApplication.applicant.phone}</p>
-            </div>
-            <div>
-              <p className="text-sm text-gray-500">Monthly Income</p>
-              <p className="font-medium">${loanApplication.applicant.monthlyIncome}</p>
-            </div>
-          </div>
         </div>
 
         {/* Loan Details */}
@@ -107,48 +108,27 @@ const LoanReview: React.FC = () => {
           <div className="p-6 grid grid-cols-2 gap-4">
             <div>
               <p className="text-sm text-gray-500">Amount Requested</p>
-              <p className="font-medium">${loanApplication.loanDetails.amount}</p>
+              <p className="font-medium">₦{loan.amount.toLocaleString()}</p>
             </div>
             <div>
               <p className="text-sm text-gray-500">Tenure</p>
-              <p className="font-medium">{loanApplication.loanDetails.tenure} months</p>
+              <p className="font-medium">{loan.tenure} months</p>
             </div>
             <div>
               <p className="text-sm text-gray-500">Purpose</p>
-              <p className="font-medium">{loanApplication.loanDetails.purpose}</p>
+              <p className="font-medium">{loan.purpose || 'Not specified'}</p>
             </div>
             <div>
               <p className="text-sm text-gray-500">Interest Rate</p>
-              <p className="font-medium">{loanApplication.loanDetails.interestRate}%</p>
+              <p className="font-medium">{loan.interestRate}%</p>
             </div>
-          </div>
-        </div>
-
-        {/* Risk Assessment */}
-        <div className="bg-white rounded-lg shadow mb-6">
-          <div className="p-6 border-b">
-            <h2 className="text-xl font-semibold">Risk Assessment</h2>
-          </div>
-          <div className="p-6">
-            <div className="grid grid-cols-3 gap-4 mb-6">
-              <div className="text-center p-4 bg-gray-50 rounded-lg">
-                <p className="text-sm text-gray-500">Credit Score</p>
-                <p className="text-2xl font-bold text-blue-600">
-                  {loanApplication.applicant.creditScore}
-                </p>
-              </div>
-              <div className="text-center p-4 bg-gray-50 rounded-lg">
-                <p className="text-sm text-gray-500">Debt-to-Income</p>
-                <p className="text-2xl font-bold text-green-600">
-                  {loanApplication.riskMetrics.debtToIncome}%
-                </p>
-              </div>
-              <div className="text-center p-4 bg-gray-50 rounded-lg">
-                <p className="text-sm text-gray-500">Risk Score</p>
-                <p className="text-2xl font-bold text-purple-600">
-                  {loanApplication.riskMetrics.riskScore}
-                </p>
-              </div>
+            <div>
+              <p className="text-sm text-gray-500">Monthly Payment</p>
+              <p className="font-medium">₦{loan.monthlyPayment?.toLocaleString() || 'Calculating...'}</p>
+            </div>
+            <div>
+              <p className="text-sm text-gray-500">Application Date</p>
+              <p className="font-medium">{new Date(loan.appliedAt).toLocaleDateString()}</p>
             </div>
           </div>
         </div>
@@ -168,20 +148,22 @@ const LoanReview: React.FC = () => {
         </div>
 
         {/* Action Buttons */}
-        <div className="flex justify-end space-x-4">
-          <button
-            onClick={() => handleStatusUpdate('REJECTED')}
-            className="px-6 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700"
-          >
-            Reject Application
-          </button>
-          <button
-            onClick={() => handleStatusUpdate('APPROVED')}
-            className="px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700"
-          >
-            Approve Application
-          </button>
-        </div>
+        {loan.status === 'PENDING' && (
+          <div className="flex justify-end space-x-4">
+            <button
+              onClick={() => handleStatusUpdate('REJECTED')}
+              className="px-6 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700"
+            >
+              Reject Application
+            </button>
+            <button
+              onClick={() => handleStatusUpdate('APPROVED')}
+              className="px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700"
+            >
+              Approve Application
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );
