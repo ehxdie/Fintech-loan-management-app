@@ -1,4 +1,6 @@
 # Fintech Loan Management App
+![loan app](https://github.com/user-attachments/assets/1e969631-945b-46ec-8aec-6fa787cd1f44)
+![fintech app](https://github.com/user-attachments/assets/7159293c-6732-4221-93e2-40680121d9d4)
 
 A comprehensive fintech application designed to streamline loan management, user accounts, and financial transactions. Built with React and Spring Boot, it provides a secure and efficient platform for managing loans, repayments, and user interactions.
 
