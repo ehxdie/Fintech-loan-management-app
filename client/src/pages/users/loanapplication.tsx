@@ -1,26 +1,44 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import { loanAPI } from '../../services/api';
 
-interface LoanApplication {
+interface Loan {
+  id: number;
+  userId: number; // Assuming `User` is referenced by ID
+  amount: number;
+  tenure: number; // Loan tenure in months
+  interestRate: number; // Interest rate as a percentage (e.g., 5.0 for 5%)
+  status: string; // e.g., "PENDING", "APPROVED", "REPAID"
+  appliedAt: string; // ISO string for LocalDateTime
+  approvedAt?: string | null; // Nullable, ISO string for LocalDateTime
+  repaidAt?: string | null; // Nullable, ISO string for LocalDateTime
+  nextPaymentDate?: string | null; // Nullable, ISO string for LocalDateTime
+  remainingBalance?: number | null; // Nullable
+  monthlyPayment?: number | null; // Nullable
+  purpose?: string | null; // Nullable, purpose of the loan
+  createdAt: string; // ISO string for LocalDateTime
+  updatedAt: string; // ISO string for LocalDateTime
+}
+
+interface LoanApplicationData {
   amount: number;
   tenure: number;
   purpose: string;
   employmentType: string;
   monthlyIncome: number;
-  existingLoans: boolean;
   interestRate: number;
 }
 
 const LoanApplication: React.FC = () => {
   const navigate = useNavigate();
-  const [formData, setFormData] = useState<LoanApplication>({
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [formData, setFormData] = useState<LoanApplicationData>({
     amount: 10000,
     tenure: 12,
     purpose: '',
     employmentType: '',
     monthlyIncome: 0,
-    existingLoans: false,
     interestRate: 15
   });
 
@@ -34,12 +52,27 @@ const LoanApplication: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setIsSubmitting(true);
+
     try {
-      // API call would go here
+      const loanData: Partial<Loan> = {
+        amount: formData.amount,
+        tenure: formData.tenure,
+        purpose: formData.purpose,
+        interestRate: calculateInterest(),
+        status: 'PENDING',
+        appliedAt: new Date().toISOString(),
+        userId: 1, // Should come from auth context in real app
+      };
+
+      const response = await loanAPI.createLoan(loanData);
       toast.success('Loan application submitted successfully!');
-      navigate('/loan-details/:id');
+      navigate(`/loan-details/${response.data.id}`);
     } catch (error) {
+      console.error('Failed to submit loan application:', error);
       toast.error('Failed to submit loan application');
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -146,10 +179,12 @@ const LoanApplication: React.FC = () => {
           {/* Submit Button */}
           <button
             type="submit"
+            disabled={isSubmitting}
             className="w-full p-4 bg-green-600 text-white rounded-lg shadow hover:bg-green-700 
-            focus:ring-2 focus:ring-green-500 focus:outline-none transition-colors duration-200"
+            focus:ring-2 focus:ring-green-500 focus:outline-none transition-colors duration-200 
+            disabled:bg-gray-400 disabled:cursor-not-allowed"
           >
-            Submit Application
+            {isSubmitting ? 'Submitting...' : 'Submit Application'}
           </button>
         </form>
       </div>

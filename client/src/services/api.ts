@@ -19,7 +19,7 @@ export const userAPI = {
 export const loanAPI = {
   getAllLoans: () => api.get('/loans'),
   getUserLoans: (userId: string) => api.get(`/loans/user/${userId}`),
-    getLoanById: (id: string) => axios.get(`/loans/${id}`),
+  getLoanById: (id: string) => axios.get(`/loans/${id}`),
   createLoan: (data: any) => api.post('/loans', data),
   updateLoanStatus: (id: string, status: string) => 
     api.patch(`/loans/${id}/status`, { status }),

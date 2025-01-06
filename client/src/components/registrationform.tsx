@@ -28,8 +28,9 @@ const RegistrationForm: React.FC = () => {
       setError('All fields are required');
       return;
     }
-    console.log(formData);
+
     try {
+      console.log(formData);
       await registerUser(formData);
       alert('Registration Successful!');
       setError('Registration Successful')

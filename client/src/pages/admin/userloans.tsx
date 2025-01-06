@@ -3,19 +3,49 @@ import { useNavigate } from 'react-router-dom';
 import { Search, Filter } from 'lucide-react';
 import { loanAPI } from '../../services/api.ts';
 
-interface LoanRecord {
-  id: number;
-  userId: number;
-  applicant: string;
-  email: string;
-  amount: number;
-  purpose: string;
-  status: 'PENDING' | 'APPROVED' | 'REJECTED';
-  applicationDate: string;
-  creditScore: number;
-  interestRate: number;
-  tenure: number;
+interface Loan {
+    id: number;
+    userId: number;
+    amount: number;
+    tenure: number;
+    interestRate: number;
+    status: string;
+    appliedAt: string;
+    approvedAt?: string | null;
+    repaidAt?: string | null;
+    nextPaymentDate?: string | null;
+    remainingBalance?: number | null;
+    monthlyPayment?: number | null;
+    purpose?: string | null;
+    createdAt: string;
+    updatedAt: string;
 }
+
+const mockLoans: Loan[] = [
+    {
+        id: 1,
+        userId: 101,
+        amount: 50000,
+        tenure: 12,
+        interestRate: 5,
+        status: 'PENDING',
+        appliedAt: new Date().toISOString(),
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+    },
+    {
+        id: 2,
+        userId: 102,
+        amount: 100000,
+        tenure: 24,
+        interestRate: 7.5,
+        status: 'APPROVED',
+        appliedAt: new Date().toISOString(),
+        approvedAt: new Date().toISOString(),
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+    },
+];
 
 const UserLoans: React.FC = () => {
     const navigate = useNavigate();
@@ -23,7 +53,7 @@ const UserLoans: React.FC = () => {
     const [searchQuery, setSearchQuery] = useState('');
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 10;
-    const [loans, setLoans] = useState<LoanRecord[]>([]);
+    const [loans, setLoans] = useState<Loan[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
@@ -31,9 +61,10 @@ const UserLoans: React.FC = () => {
         const fetchLoans = async () => {
             try {
                 const response = await loanAPI.getAllLoans();
-                setLoans(response.data);
+                setLoans(response.data as Loan[]);
             } catch (err) {
-                setError('Failed to fetch loans');
+                setError('Failed to fetch loans. Showing mock data.');
+                setLoans(mockLoans); // Use mock data if API call fails
                 console.error(err);
             } finally {
                 setLoading(false);
@@ -45,8 +76,9 @@ const UserLoans: React.FC = () => {
 
     const filteredLoans = loans.filter(loan => {
         const matchesStatus = statusFilter === 'all' || loan.status === statusFilter;
-        const matchesSearch = loan.applicant.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            loan.id.toString().includes(searchQuery);
+        const matchesSearch =
+            loan.id.toString().includes(searchQuery) ||
+            loan.purpose?.toLowerCase().includes(searchQuery.toLowerCase() || '');
         return matchesStatus && matchesSearch;
     });
 
@@ -57,7 +89,7 @@ const UserLoans: React.FC = () => {
     );
 
     if (loading) return <div>Loading...</div>;
-    if (error) return <div>Error: {error}</div>;
+    if (error) return <div>{error}</div>;
 
     return (
         <div className="min-h-screen bg-gray-50 p-6">
@@ -71,7 +103,7 @@ const UserLoans: React.FC = () => {
                             <Search className="absolute left-3 top-3 text-gray-400" size={20} />
                             <input
                                 type="text"
-                                placeholder="Search by applicant name or loan ID..."
+                                placeholder="Search by loan ID or purpose..."
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
                                 className="pl-10 w-full p-2 border rounded-lg"
@@ -96,7 +128,6 @@ const UserLoans: React.FC = () => {
                         <thead className="bg-gray-50">
                             <tr>
                                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">ID</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Applicant</th>
                                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Amount</th>
                                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Purpose</th>
                                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Date</th>
@@ -108,20 +139,14 @@ const UserLoans: React.FC = () => {
                             {currentLoans.map((loan) => (
                                 <tr key={loan.id}>
                                     <td className="px-6 py-4 whitespace-nowrap">{loan.id}</td>
-                                    <td className="px-6 py-4">
-                                        <div>
-                                            <p className="font-medium">{loan.applicant}</p>
-                                            <p className="text-sm text-gray-500">{loan.email}</p>
-                                        </div>
-                                    </td>
                                     <td className="px-6 py-4 whitespace-nowrap">₦{loan.amount.toLocaleString()}</td>
-                                    <td className="px-6 py-4">{loan.purpose}</td>
-                                    <td className="px-6 py-4 whitespace-nowrap">{loan.applicationDate}</td>
+                                    <td className="px-6 py-4">{loan.purpose || 'N/A'}</td>
+                                    <td className="px-6 py-4 whitespace-nowrap">{loan.appliedAt}</td>
                                     <td className="px-6 py-4 whitespace-nowrap">
-                                        <span className={`px-2 py-1 rounded-full text-xs font-medium
-                      ${loan.status === 'APPROVED' ? 'bg-green-100 text-green-800' :
+                                        <span className={`px-2 py-1 rounded-full text-xs font-medium ${loan.status === 'APPROVED' ? 'bg-green-100 text-green-800' :
                                                 loan.status === 'REJECTED' ? 'bg-red-100 text-red-800' :
-                                                    'bg-yellow-100 text-yellow-800'}`}>
+                                                    'bg-yellow-100 text-yellow-800'
+                                            }`}>
                                             {loan.status}
                                         </span>
                                     </td>

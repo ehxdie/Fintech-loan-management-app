@@ -1,19 +1,49 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { format } from 'date-fns';
 import DatePicker from 'react-datepicker';
 import "react-datepicker/dist/react-datepicker.css";
 import { Search, Calendar, Filter } from 'lucide-react';
+import { loanAPI, transactionAPI } from '../../services/api.ts';
+import { toast } from 'react-toastify';
 
-interface Transaction {
+export interface Transaction {
   id: number;
-  type: 'DISBURSEMENT' | 'REPAYMENT';
+  userId: number; // Assuming `User` is referenced by ID
+  loanId: number; // Assuming `Loan` is referenced by ID
+  transactionType: string; // e.g., "DISBURSEMENT" or "REPAYMENT"
   amount: number;
-  description: string;
-  reference: string;
-  status: 'COMPLETED' | 'PENDING' | 'FAILED';
-  transactionDate: string;
-  loanId: number;
+  transactionDate: string; // ISO string format for LocalDateTime
+  status: string; // e.g., "COMPLETED", "PENDING", or "FAILED"
+  createdAt: string; // ISO string format for created timestamp
+  updatedAt: string; // ISO string format for updated timestamp
 }
+
+
+
+const mockTransactions: Transaction[] = [
+  {
+    id: 1,
+    userId: 1,
+    loanId: 1,
+    transactionType: 'DISBURSEMENT',
+    amount: 50000,
+    transactionDate: '2024-03-15T10:00:00Z',
+    status: 'COMPLETED',
+    createdAt: '2024-03-15T10:00:00Z',
+    updatedAt: '2024-03-15T10:00:00Z'
+  },
+  {
+    id: 2,
+    userId: 1,
+    loanId: 1,
+    transactionType: 'REPAYMENT',
+    amount: 4500,
+    transactionDate: '2024-03-20T15:30:00Z',
+    status: 'COMPLETED',
+    createdAt: '2024-03-20T15:30:00Z',
+    updatedAt: '2024-03-20T15:30:00Z'
+  }
+];
 
 const TransactionHistory: React.FC = () => {
   const [startDate, setStartDate] = useState<Date | null>(null);
@@ -22,34 +52,35 @@ const TransactionHistory: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
+  const [transactions, setTransactions] = useState<Transaction[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  const transactions: Transaction[] = [
-    {
-      id: 1,
-      type: 'DISBURSEMENT',
-      amount: 50000,
-      description: 'Loan Disbursement',
-      reference: 'TRX001',
-      status: 'COMPLETED',
-      transactionDate: '2024-03-15',
-      loanId: 1
-    },
-    {
-      id: 2,
-      type: 'REPAYMENT',
-      amount: 4500,
-      description: 'Loan Repayment',
-      reference: 'TRX002',
-      status: 'COMPLETED',
-      transactionDate: '2024-03-20',
-      loanId: 1
-    }
-  ];
+  useEffect(() => {
+    const fetchTransactions = async () => {
+      try {
+        setIsLoading(true);
+        setError(null);
+        // Assuming we have the current user's ID stored somewhere
+        const userId = '1'; // Replace with actual user ID
+        const response = await transactionAPI.getUserTransactions(userId);
+        setTransactions(response.data);
+      } catch (err) {
+        toast.error('Failed to fetch transactions. Using mock data instead.');
+        setError('Failed to load transactions. Using mock data instead.');
+        setTransactions(mockTransactions);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchTransactions();
+  }, []);
 
   const filteredTransactions = transactions.filter(transaction => {
-    const matchesType = transactionType === 'all' || transaction.type === transactionType;
-    const matchesSearch = transaction.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      transaction.reference.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesType = transactionType === 'all' || transaction.transactionType === transactionType;
+    const matchesSearch = transaction.id.toString().includes(searchQuery.toLowerCase()) ||
+      transaction.loanId.toString().includes(searchQuery.toLowerCase());
     const matchesDateRange = (!startDate || !endDate) ? true :
       (new Date(transaction.transactionDate) >= startDate && new Date(transaction.transactionDate) <= endDate);
 
@@ -74,6 +105,12 @@ const TransactionHistory: React.FC = () => {
     <div className="min-h-screen bg-gray-50 p-6">
       <div className="max-w-6xl mx-auto">
         <h1 className="text-2xl font-bold text-gray-800 mb-6">Transaction History</h1>
+
+        {error && (
+          <div className="mb-4 p-4 bg-yellow-50 border border-yellow-200 rounded-lg text-yellow-800">
+            {error}
+          </div>
+        )}
 
         {/* Filters */}
         <div className="bg-white rounded-lg shadow mb-6">
@@ -131,69 +168,78 @@ const TransactionHistory: React.FC = () => {
 
         {/* Transactions Table */}
         <div className="bg-white rounded-lg shadow overflow-hidden">
-          <table className="min-w-full">
-            <thead className="bg-gray-50">
-              <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Date</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Reference</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Description</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Type</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Amount</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-200">
-              {currentTransactions.map((transaction) => (
-                <tr key={transaction.id}>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    {format(new Date(transaction.transactionDate), 'MMM dd, yyyy')}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">{transaction.reference}</td>
-                  <td className="px-6 py-4">{transaction.description}</td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <span className={`px-2 py-1 rounded-full text-xs font-medium
-                      ${transaction.type === 'DISBURSEMENT' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
-                      {transaction.type}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <span className={transaction.type === 'DISBURSEMENT' ? 'text-green-600' : 'text-red-600'}>
-                      ₦{transaction.amount.toLocaleString()}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <span className="px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                      {transaction.status}
-                    </span>
-                  </td>
+          {isLoading ? (
+            <div className="p-8 text-center">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900 mx-auto"></div>
+              <p className="mt-4 text-gray-600">Loading transactions...</p>
+            </div>
+          ) : (
+            <table className="min-w-full">
+              <thead className="bg-gray-50">
+                <tr>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Date</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Transaction ID</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Loan ID</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Type</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Amount</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody className="divide-y divide-gray-200">
+                {currentTransactions.map((transaction) => (
+                  <tr key={transaction.id}>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      {format(new Date(transaction.transactionDate), 'MMM dd, yyyy HH:mm')}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">#{transaction.id}</td>
+                    <td className="px-6 py-4 whitespace-nowrap">#{transaction.loanId}</td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <span className={`px-2 py-1 rounded-full text-xs font-medium
+                        ${transaction.transactionType === 'DISBURSEMENT' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
+                        {transaction.transactionType}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <span className={transaction.transactionType === 'DISBURSEMENT' ? 'text-green-600' : 'text-red-600'}>
+                        ₦{transaction.amount.toLocaleString()}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <span className="px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                        {transaction.status}
+                      </span>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
         </div>
 
         {/* Pagination */}
-        <div className="mt-4 flex justify-between items-center">
-          <div className="text-sm text-gray-500">
-            Showing {(currentPage - 1) * itemsPerPage + 1} to {Math.min(currentPage * itemsPerPage, filteredTransactions.length)} of {filteredTransactions.length} results
+        {!isLoading && (
+          <div className="mt-4 flex justify-between items-center">
+            <div className="text-sm text-gray-500">
+              Showing {(currentPage - 1) * itemsPerPage + 1} to {Math.min(currentPage * itemsPerPage, filteredTransactions.length)} of {filteredTransactions.length} results
+            </div>
+            <div className="flex space-x-2">
+              <button
+                onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                disabled={currentPage === 1}
+                className="px-4 py-2 border rounded-lg disabled:opacity-50"
+              >
+                Previous
+              </button>
+              <button
+                onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                disabled={currentPage === totalPages}
+                className="px-4 py-2 border rounded-lg disabled:opacity-50"
+              >
+                Next
+              </button>
+            </div>
           </div>
-          <div className="flex space-x-2">
-            <button
-              onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
-              disabled={currentPage === 1}
-              className="px-4 py-2 border rounded-lg disabled:opacity-50"
-            >
-              Previous
-            </button>
-            <button
-              onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
-              disabled={currentPage === totalPages}
-              className="px-4 py-2 border rounded-lg disabled:opacity-50"
-            >
-              Next
-            </button>
-          </div>
-        </div>
+        )}
       </div>
     </div>
   );

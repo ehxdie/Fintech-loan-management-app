@@ -3,37 +3,25 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { loanAPI } from '../../services/api.ts';
 
-interface LoanApplication {
+interface Loan {
   id: number;
-  applicant: {
-    id: number;
-    name: string;
-    email: string;
-    phone: string;
-    monthlyIncome: number;
-    creditScore: number;
-  };
-  loanDetails: {
-    amount: number;
-    tenure: number;
-    purpose: string;
-    interestRate: number;
-    monthlyPayment: number;
-    applicationDate: string;
-    status: string;
-  };
-  documents: Array<{
-    id: number;
-    name: string;
-    status: string;
-    url: string;
-  }>;
-  riskMetrics: {
-    debtToIncome: number;
-    creditUtilization: number;
-    riskScore: number;
-  };
+  userId: number; // Assuming `User` is referenced by ID
+  amount: number;
+  tenure: number; // Loan tenure in months
+  interestRate: number; // Interest rate as a percentage (e.g., 5.0 for 5%)
+  status: string; // e.g., "PENDING", "APPROVED", "REPAID"
+  appliedAt: string; // ISO string for LocalDateTime
+  approvedAt?: string | null; // Nullable, ISO string for LocalDateTime
+  repaidAt?: string | null; // Nullable, ISO string for LocalDateTime
+  nextPaymentDate?: string | null; // Nullable, ISO string for LocalDateTime
+  remainingBalance?: number | null; // Nullable
+  monthlyPayment?: number | null; // Nullable
+  purpose?: string | null; // Nullable, purpose of the loan
+  createdAt: string; // ISO string for LocalDateTime
+  updatedAt: string; // ISO string for LocalDateTime
 }
+
+
 
 const LoanReview: React.FC = () => {
   const { id } = useParams();

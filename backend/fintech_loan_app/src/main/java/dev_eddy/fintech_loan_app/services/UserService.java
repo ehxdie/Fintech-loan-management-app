@@ -12,11 +12,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Service
 @Transactional
 public class UserService  {
 
+    private static final Logger logger = LoggerFactory.getLogger(UserService.class);
     private final UserRepository userRepository;
     private final UserMapper userMapper;
 
@@ -29,17 +32,21 @@ public class UserService  {
 
 
     public UserDTO createUser(CreateUserDTO createUserDTO) {
+        logger.debug("Creating user with email: {} and role: {}", 
+            createUserDTO.getEmail(), 
+            createUserDTO.getRoles() 
+        );
+        
+        // For development/testing only - remove in production
+        logger.debug("Raw password: {}", createUserDTO.getPassword());
+
         if (userRepository.existsByEmail(createUserDTO.getEmail())) {
             throw new EmailAlreadyExistsException("Email already exists: " + createUserDTO.getEmail());
         }
 
         User user = userMapper.toEntity(createUserDTO);
         user.setPassword(createUserDTO.getPassword());
-        
-        // Ensure roles are set
-        if (user.getRoles() == null || user.getRoles().isEmpty()) {
-            user.setRoles("USER");
-        }
+        user.setRoles(createUserDTO.getRoles() != null ? createUserDTO.getRoles() : "User");
 
         User savedUser = userRepository.save(user);
         return userMapper.toDTO(savedUser);
