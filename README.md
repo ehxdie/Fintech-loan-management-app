@@ -71,11 +71,7 @@ cd fintech-loan-management-app
 2. Setup Backend
 ```bash
 cd backend/fintech_loan_app
-<<<<<<< HEAD
 mvn clean install
-=======
-mvn install
->>>>>>> Add Docker Compose configuration and update README; modify .gitignore and header role handling
 mvn spring-boot:run
 ```
 
@@ -115,24 +111,23 @@ npm test
 ```
 
 ## Deployment
-
+### Database Deployment
+The project includes a Docker compose file to build setup a postgres database.
+To run the database
+```bash
+docker compose -f docker-compose.yaml up
+```
 ### Backend Deployment
 1. Build the JAR file
 ```bash
-<<<<<<< HEAD
 mvn clean install
 =======
 mvn clean package
->>>>>>> Add Docker Compose configuration and update README; modify .gitignore and header role handling
 ```
 
 2. Run the application
 ```bash
-<<<<<<< HEAD
 mvn spring-boot:run
-=======
-java -jar target/fintech_loan_app-0.0.1-SNAPSHOT.jar
->>>>>>> Add Docker Compose configuration and update README; modify .gitignore and header role handling
 ```
 
 ### Frontend Deployment
@@ -140,7 +135,6 @@ java -jar target/fintech_loan_app-0.0.1-SNAPSHOT.jar
 ```bash
 npm run build
 ```
-<<<<<<< HEAD
 2. Run the application
 ```bash
 npm run start
