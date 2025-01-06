@@ -1,13 +1,10 @@
 # Fintech Loan Management App
-![fintech app](https://github.com/user-attachments/assets/c0fb048f-c00f-4547-8437-67dfe3e0db34)
-![loan app](https://github.com/user-attachments/assets/32ac2a25-9197-4571-b035-c62f31f655bd)
 
+A comprehensive fintech application designed to streamline loan management, user accounts, and financial transactions. Built with React and Spring Boot, it provides a secure and efficient platform for managing loans, repayments, and user interactions.
 
 ## Project Overview
-Project Overview
-Fintech Loan Management System is a full-stack web application that allows users to apply for loans, view loan statuses, make transactions, and manage their accounts. The system includes a back-end built with Java Spring Boot for secure API handling, and a front-end built with React/Next.js and TypeScript for a responsive and modern user interface. The application implements key features such as user authentication, loan application and management, transaction processing, and real-time status updates, along with role-based access control and audit logging.
 
-The back-end is powered by PostgreSQL (or MySQL), and JWT-based authentication ensures secure login and session management. The front-end offers a user-friendly dashboard and form validation, with charts to visualize loan trends and transaction distributions.
+The Fintech Loan Management App is a full-stack solution that enables users to apply for loans, manage repayments, and track their financial transactions. The system features role-based access control, real-time transaction updates, and comprehensive loan management capabilities, making it suitable for both users and administrators.
 
 ## Features
 
@@ -64,3 +61,95 @@ The back-end is powered by PostgreSQL (or MySQL), and JWT-based authentication e
 ### Installation
 
 1. Clone the repository
+```bash
+git clone https://github.com/yourusername/fintech-loan-management-app.git
+cd fintech-loan-management-app
+```
+
+2. Setup Backend
+```bash
+cd backend/fintech_loan_app
+mvn clean install
+mvn spring-boot:run
+```
+
+3. Setup Frontend
+```bash
+cd client
+npm install
+npm start
+```
+
+### Environment Configuration
+
+1. Backend Configuration (application.properties)
+```properties
+spring.datasource.url=jdbc:postgresql://localhost:5432/fintech_db
+spring.datasource.username=your_username
+spring.datasource.password=your_password
+```
+
+2. Frontend Configuration (.env)
+```env
+REACT_APP_API_URL=http://localhost:8080/api
+```
+
+## Running Tests
+
+### Backend Tests
+```bash
+cd backend/fintech_loan_app
+mvn test
+```
+
+### Frontend Tests
+```bash
+cd client
+npm test
+```
+
+## Deployment
+
+### Backend Deployment
+1. Build the JAR file
+```bash
+mvn clean install
+```
+
+2. Run the application
+```bash
+mvn spring-boot:run
+```
+
+### Frontend Deployment
+1. Create production build
+```bash
+npm run build
+```
+2. Run the application
+```bash
+npm run start
+```
+
+## API Documentation
+
+The API documentation is available at `/swagger-ui.html` when running the backend server.
+
+Key endpoints:
+- `/api/auth/*` - Authentication endpoints
+- `/api/loans/*` - Loan management endpoints
+- `/api/users/*` - User management endpoints
+- `/api/transactions/*` - Transaction management endpoints
+
+## Contributing
+
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
