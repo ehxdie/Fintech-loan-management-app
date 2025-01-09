@@ -39,7 +39,7 @@ public class UserMapper {
         user.setPhoneNumber(dto.getPhoneNumber());
         user.setPassword(dto.getPassword());
         // Ensure roles are set
-        user.setRoles(dto.getRoles() != null ? dto.getRoles() : "USER");
+        user.setRoles(dto.getRoles() != null ? dto.getRoles() : "User");
 
         return user;
     }

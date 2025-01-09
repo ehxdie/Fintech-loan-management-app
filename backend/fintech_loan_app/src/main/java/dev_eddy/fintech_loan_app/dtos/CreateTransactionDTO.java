@@ -9,9 +9,6 @@ public class CreateTransactionDTO {
     @NotNull(message = "User ID is required")
     private Long userId;
 
-    @NotNull(message = "Loan ID is required")
-    private Long loanId;
-
     @NotBlank(message = "Transaction type is required")
     private String transactionType;
 
@@ -26,14 +23,6 @@ public class CreateTransactionDTO {
 
     public void setUserId(Long userId) {
         this.userId = userId;
-    }
-
-    public Long getLoanId() {
-        return loanId;
-    }
-
-    public void setLoanId(Long loanId) {
-        this.loanId = loanId;
     }
 
     public String getTransactionType() {

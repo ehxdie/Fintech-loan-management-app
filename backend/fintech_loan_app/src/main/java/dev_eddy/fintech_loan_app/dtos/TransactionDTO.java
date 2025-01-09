@@ -6,7 +6,6 @@ import java.time.LocalDateTime;
 public class TransactionDTO {
     private Long id;
     private Long userId;
-    private Long loanId;
     private String transactionType;
     private Double amount;
     private LocalDateTime transactionDate;
@@ -33,14 +32,6 @@ public class TransactionDTO {
 
     public void setUserId(Long userId) {
         this.userId = userId;
-    }
-
-    public Long getLoanId() {
-        return loanId;
-    }
-
-    public void setLoanId(Long loanId) {
-        this.loanId = loanId;
     }
 
     public String getTransactionType() {

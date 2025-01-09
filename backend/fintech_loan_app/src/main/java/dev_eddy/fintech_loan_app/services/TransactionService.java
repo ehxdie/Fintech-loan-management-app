@@ -1,10 +1,13 @@
 package dev_eddy.fintech_loan_app.services;
 
 import dev_eddy.fintech_loan_app.dtos.TransactionDTO;
+import dev_eddy.fintech_loan_app.dtos.UserDTO;
 import dev_eddy.fintech_loan_app.dtos.CreateTransactionDTO;
+import dev_eddy.fintech_loan_app.dtos.LoanDTO;
 import dev_eddy.fintech_loan_app.entity.User;
 import dev_eddy.fintech_loan_app.entity.Loan;
 import dev_eddy.fintech_loan_app.entity.Transaction;
+import dev_eddy.fintech_loan_app.exceptions.LoanNotFoundException;
 import dev_eddy.fintech_loan_app.exceptions.ResourceNotFoundException;
 import dev_eddy.fintech_loan_app.repository.UserRepository;
 import dev_eddy.fintech_loan_app.repository.TransactionRepository;
@@ -21,7 +24,6 @@ import java.util.stream.Collectors;
 public class TransactionService {
     private final TransactionRepository transactionRepository;
     private final UserRepository userRepository;
-    private final LoanRepository loanRepository;
     private final TransactionMapper transactionMapper;
 
     @Autowired
@@ -31,7 +33,6 @@ public class TransactionService {
             TransactionMapper transactionMapper) {
         this.transactionRepository = transactionRepository;
         this.userRepository = userRepository;
-        this.loanRepository = loanRepository;
         this.transactionMapper = transactionMapper;
     }
 
@@ -39,12 +40,16 @@ public class TransactionService {
         User user = userRepository.findById(createTransactionDTO.getUserId())
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
-        Loan loan = loanRepository.findById(createTransactionDTO.getLoanId())
-                .orElseThrow(() -> new ResourceNotFoundException("Loan not found"));
 
-        Transaction transaction = transactionMapper.toEntity(createTransactionDTO, user, loan);
+        Transaction transaction = transactionMapper.toEntity(createTransactionDTO, user);
         Transaction savedTransaction = transactionRepository.save(transaction);
         return transactionMapper.toDTO(savedTransaction);
+    }
+
+     public List<TransactionDTO> getAllUserTransactions() {
+        return transactionRepository.findAll().stream()
+                .map(transactionMapper::toDTO)
+                .collect(Collectors.toList());
     }
 
     public List<TransactionDTO> getUserTransactions(Long userId) {
@@ -53,12 +58,12 @@ public class TransactionService {
                 .collect(Collectors.toList());
     }
 
-    public List<TransactionDTO> getLoanTransactions(Long loanId) {
-        return transactionRepository.findByLoanId(loanId).stream()
-                .map(transactionMapper::toDTO)
-                .collect(Collectors.toList());
+     public TransactionDTO getTransactionById(Long id) {
+         Transaction transaction = transactionRepository.findById(id)
+            .orElseThrow(() -> new ResourceNotFoundException("Transaction not found with id: " + id));
+        return transactionMapper.toDTO(transaction);
     }
-
+   
     public TransactionDTO updateTransactionStatus(Long id, String status) {
         Transaction transaction = transactionRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Transaction not found"));
@@ -66,5 +71,12 @@ public class TransactionService {
         transaction.setStatus(status);
         Transaction updatedTransaction = transactionRepository.save(transaction);
         return transactionMapper.toDTO(updatedTransaction);
+    }
+
+    public void deleteTransaction(Long id) {
+        if (!transactionRepository.existsById(id)) {
+            throw new ResourceNotFoundException("User not found with id: " + id);
+        }
+        transactionRepository.deleteById(id);
     }
 }

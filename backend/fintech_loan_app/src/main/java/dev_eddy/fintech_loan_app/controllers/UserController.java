@@ -27,25 +27,29 @@ public class UserController {
 
     }
 
+    // Create a user
     @PostMapping("/register")
     public ResponseEntity<UserDTO> createUser(@Valid @RequestBody CreateUserDTO createUserDTO) {
         UserDTO createdUser = userService.createUser(createUserDTO);
         return new ResponseEntity<>(createdUser, HttpStatus.CREATED);
     }
 
+    // Get all users
+    @GetMapping
+    public ResponseEntity<List<UserDTO>> getAllUsers() {
+        List<UserDTO> users = userService.getAllUsers();
+        return ResponseEntity.ok(users);
+    }
+    
+    // Get a user
     @GetMapping("/{id}")
     public ResponseEntity<UserDTO> getUserById(@PathVariable Long id) {
         UserDTO user = userService.getUserById(id);
         return ResponseEntity.ok(user);
     }
 
-    @GetMapping
-    public ResponseEntity<List<UserDTO>> getAllUsers() {
-        List<UserDTO> users = userService.getAllUsers();
-        return ResponseEntity.ok(users);
-    }
-
-    @PutMapping("/user/{id}")
+    // Update a user
+    @PatchMapping("/user/{id}")
     public ResponseEntity<UserDTO> updateUser(
             @PathVariable Long id,
             @Valid @RequestBody CreateUserDTO updateUserDTO) {
@@ -53,6 +57,7 @@ public class UserController {
         return ResponseEntity.ok(updatedUser);
     }
 
+    // Delete a user
     @DeleteMapping("/admin/{id}")
     public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
         userService.deleteUser(id);

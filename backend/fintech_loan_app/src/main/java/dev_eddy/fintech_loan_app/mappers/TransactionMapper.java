@@ -21,7 +21,6 @@ public class TransactionMapper {
         TransactionDTO dto = new TransactionDTO();
         dto.setId(transaction.getId());
         dto.setUserId(transaction.getUser().getId());
-        dto.setLoanId(transaction.getLoan().getId());
         dto.setTransactionType(transaction.getTransactionType());
         dto.setAmount(transaction.getAmount());
         dto.setTransactionDate(transaction.getTransactionDate());
@@ -32,14 +31,13 @@ public class TransactionMapper {
         return dto;
     }
 
-    public Transaction toEntity(CreateTransactionDTO dto, User user, Loan loan) {
+    public Transaction toEntity(CreateTransactionDTO dto, User user) {
         if (dto == null) {
             return null;
         }
 
         Transaction transaction = new Transaction();
         transaction.setUser(user);
-        transaction.setLoan(loan);
         transaction.setTransactionType(dto.getTransactionType());
         transaction.setAmount(dto.getAmount());
         transaction.setTransactionDate(LocalDateTime.now());

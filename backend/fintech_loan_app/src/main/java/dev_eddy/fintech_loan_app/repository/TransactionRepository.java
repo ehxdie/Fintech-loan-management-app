@@ -11,8 +11,6 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
     // You can add custom query methods if needed
     List<Transaction> findByUserId(Long userId);
 
-    List<Transaction> findByLoanId(Long loanId);
-
     List<Transaction> findByStatus(String status);
 
 }

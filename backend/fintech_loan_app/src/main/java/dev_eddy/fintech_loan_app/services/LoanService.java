@@ -58,7 +58,7 @@ public class LoanService {
         return loanMapper.toDTO(loan);
     }
 
-     public List<LoanDTO> getAllLoans() {
+    public List<LoanDTO> getAllLoans() {
         return loanRepository.findAll().stream()
                 .map(loanMapper::toDTO)
                 .collect(Collectors.toList());
@@ -77,5 +77,12 @@ public class LoanService {
         loan.setStatus(status);
         Loan updatedLoan = loanRepository.save(loan);
         return loanMapper.toDTO(updatedLoan);
+    }
+
+    public void deleteTransaction(Long id) {
+        if (!loanRepository.existsById(id)) {
+            throw new ResourceNotFoundException("User not found with id: " + id);
+        }
+        loanRepository.deleteById(id);
     }
 }

@@ -12,11 +12,6 @@ public class Transaction {
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
-
-    @ManyToOne
-    @JoinColumn(name = "loan_id", nullable = false)
-    private Loan loan;
-
     private String transactionType;
     private Double amount;
     private LocalDateTime transactionDate;
@@ -54,14 +49,6 @@ public class Transaction {
 
     public void setUser(User user) {
         this.user = user;
-    }
-
-    public Loan getLoan() {
-        return loan;
-    }
-
-    public void setLoan(Loan loan) {
-        this.loan = loan;
     }
 
     public String getTransactionType() {
