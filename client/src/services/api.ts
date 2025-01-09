@@ -16,6 +16,7 @@ export const userAPI = {
   getCurrentUser: (id: string) => api.get(`/users/${id}`),
   updateUser: (id: string, data: any) => api.patch(`/users/user/{id}/${id}`, data),
   deleteUser: (id: string) => api.delete(`/users/admin/{id}/${id}`),
+  getUserByEmail: (email: string) => api.get(`/users/search`, { params: { email } }),
 };
 
 export const loanAPI = {

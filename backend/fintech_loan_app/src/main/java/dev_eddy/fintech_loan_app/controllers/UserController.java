@@ -48,6 +48,13 @@ public class UserController {
         return ResponseEntity.ok(user);
     }
 
+    // Find user by email
+    @GetMapping("/search")
+    public ResponseEntity<UserDTO> findByEmail(@RequestParam String email) {
+        UserDTO user = userService.findByEmail(email);
+        return ResponseEntity.ok(user);
+    }
+
     // Update a user
     @PatchMapping("/user/{id}")
     public ResponseEntity<UserDTO> updateUser(

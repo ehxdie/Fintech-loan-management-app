@@ -1,13 +1,9 @@
 package dev_eddy.fintech_loan_app.services;
 
 import dev_eddy.fintech_loan_app.dtos.TransactionDTO;
-import dev_eddy.fintech_loan_app.dtos.UserDTO;
 import dev_eddy.fintech_loan_app.dtos.CreateTransactionDTO;
-import dev_eddy.fintech_loan_app.dtos.LoanDTO;
 import dev_eddy.fintech_loan_app.entity.User;
-import dev_eddy.fintech_loan_app.entity.Loan;
 import dev_eddy.fintech_loan_app.entity.Transaction;
-import dev_eddy.fintech_loan_app.exceptions.LoanNotFoundException;
 import dev_eddy.fintech_loan_app.exceptions.ResourceNotFoundException;
 import dev_eddy.fintech_loan_app.repository.UserRepository;
 import dev_eddy.fintech_loan_app.repository.TransactionRepository;

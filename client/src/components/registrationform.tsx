@@ -138,7 +138,7 @@ const RegistrationForm: React.FC = () => {
               <UserCircle className="h-5 w-5 text-gray-400" />
             </div>
             <select
-              name="role"
+              name="roles"
               value={formData.roles}
               onChange={handleChange}
               required
