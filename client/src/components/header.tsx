@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Menu, X, User, LogOut } from 'lucide-react';
+import { users } from '../services/authservice.ts';
 
 const Header: React.FC = () => {
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -8,13 +9,7 @@ const Header: React.FC = () => {
     const location = useLocation();
     const navigate = useNavigate();
 
-    // Example user data - would come from auth context
-    const user = {
-        name: 'John Doe',
-        role: 'Admin' // or 'ADMIN'
-    };
-
-    const navLinks = user.role === 'Admin' ? [
+    const navLinks = users.roles === 'Admin' ? [
         { path: '/admin', label: 'Dashboard' },
         { path: '/admin/userloans', label: 'Loan Applications' },
     

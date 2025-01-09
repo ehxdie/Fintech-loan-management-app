@@ -1,11 +1,15 @@
 import axios from 'axios';
-import { useAuth } from '../contexts/AuthContext';
 
 const API_URL = 'http://localhost:8080/api'; // Base API URL
+export let users: { [key: string]: any } = {};
+
+
 
 export const loginUser = async (credentials: { email: string; password: string }) => {
+
     try {
         const response = await axios.post(`${API_URL}/auth/login`, credentials);
+        users[credentials.email] = response.data;
         return response.data;
     } catch (error) {
         if (axios.isAxiosError(error)) {
@@ -20,10 +24,11 @@ export const registerUser = async (userData: {
     email: string;
     password: string;
     phoneNumber?: string;
-    role: string;
+    roles: string;
 }) => {
     try {
         const response = await axios.post(`${API_URL}/users/register`, userData);
+        console.log(userData);
         console.log(response.data);
         return response.data;
         

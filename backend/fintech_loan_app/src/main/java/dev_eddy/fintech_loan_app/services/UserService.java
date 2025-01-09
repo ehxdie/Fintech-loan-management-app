@@ -30,7 +30,6 @@ public class UserService  {
 
     }
 
-
     public UserDTO createUser(CreateUserDTO createUserDTO) {
         logger.debug("Creating user with email: {} and role: {}", 
             createUserDTO.getEmail(), 
@@ -46,7 +45,7 @@ public class UserService  {
 
         User user = userMapper.toEntity(createUserDTO);
         user.setPassword(createUserDTO.getPassword());
-        user.setRoles(createUserDTO.getRoles() != null ? createUserDTO.getRoles() : "User");
+        user.setRoles(createUserDTO.getRoles());
 
         User savedUser = userRepository.save(user);
         return userMapper.toDTO(savedUser);

@@ -9,25 +9,31 @@ const api = axios.create({
   },
 });
 
+
+
 export const userAPI = {
-  login: (data: any) => api.post('/users/', data),
-  getCurrentUser: (id: string) => api.get(`/users/${id}`),
   getAllUsers: () => api.get('/users'),
-  updateUser: (id: string, data: any) => api.put(`/users/${id}`, data),
+  getCurrentUser: (id: string) => api.get(`/users/${id}`),
+  updateUser: (id: string, data: any) => api.patch(`/users/user/{id}/${id}`, data),
+  deleteUser: (id: string) => api.delete(`/users/admin/{id}/${id}`),
 };
 
 export const loanAPI = {
-  getAllLoans: () => api.get('/loans'),
-  getUserLoans: (userId: string) => api.get(`/loans/user/${userId}`),
-  getLoanById: (id: string) => axios.get(`/loans/${id}`),
   createLoan: (data: any) => api.post('/loans', data),
-  updateLoanStatus: (id: string, status: string) => 
-    api.patch(`/loans/${id}/status`, { status }),
+  getAllLoans: () => api.get('/loans'),
+  getLoanById: (id: string) => api.get(`/loans/${id}`),
+  // Get loan by user id
+  getUserLoans: (userId: string) => api.get(`/loans/user/${userId}`),
+  updateLoanStatus: (id: string, status: string) =>  api.patch(`/loans/admin/${id}/status`,status),
+  deleteLoan: (id: string) => api.delete(`/loans/admin/${id}`)
 };
 
 export const transactionAPI = {
   createTransaction: (data: any) => api.post('/transactions', data),
+  getAllTransactions: () => api.get('/transactions'),
+  getUserTransactionById: (id: string) => api.get(`/transactions/${id}`),
+  // Get transaction by user id
   getUserTransactions: (userId: string) => api.get(`/transactions/user/${userId}`),
-  updateTransactionStatus: (id: string, status: string) => 
-    api.patch(`/transactions/${id}/status`, { status }),
+  updateTransactionStatus: (id: string, status: string) => api.patch(`/transactions/${id}/status`,status),
+  deleteTransaction: (id: string) => api.delete(`/transactions/admin/${id}`)
 };

@@ -8,7 +8,7 @@ const RegistrationForm: React.FC = () => {
     email: '',
     phoneNumber: '',
     password: '',
-    role: ' '
+    roles: ''
   });
 
   const [error, setError] = useState<string | null>(null);
@@ -139,7 +139,7 @@ const RegistrationForm: React.FC = () => {
             </div>
             <select
               name="role"
-              value={formData.role}
+              value={formData.roles}
               onChange={handleChange}
               required
               className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg

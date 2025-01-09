@@ -7,11 +7,10 @@ import dev_eddy.fintech_loan_app.services.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.RestController;
 import jakarta.validation.Valid;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
+
 
 
 @RestController
@@ -19,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 @RequestMapping("/api/users")
 public class UserController {
 
+    
     private final UserService userService;
 
     @Autowired
@@ -40,7 +40,7 @@ public class UserController {
         List<UserDTO> users = userService.getAllUsers();
         return ResponseEntity.ok(users);
     }
-    
+
     // Get a user
     @GetMapping("/{id}")
     public ResponseEntity<UserDTO> getUserById(@PathVariable Long id) {

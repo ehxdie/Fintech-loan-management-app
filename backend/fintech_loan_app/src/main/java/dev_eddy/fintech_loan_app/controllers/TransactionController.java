@@ -41,7 +41,7 @@ public class TransactionController {
 
      // Getting a users transaction details
     @GetMapping("/{id}")
-    public ResponseEntity<TransactionDTO> getLoan(@PathVariable Long id) {
+    public ResponseEntity<TransactionDTO> getTransactionById(@PathVariable Long id) {
         TransactionDTO transaction = transactionService.getTransactionById(id);
         return ResponseEntity.ok(transaction);
     }
