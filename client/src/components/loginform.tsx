@@ -1,34 +1,39 @@
-import React, { useState } from 'react';
-import { loginUser } from '../services/authservice.ts';
+import React, { useState, useEffect } from 'react';
+// import { loginUser } from '../services/authservice.ts';
 import { useNavigate } from "react-router-dom";
 import { toast } from 'react-toastify';
 import { Mail, Lock } from 'lucide-react';
+import { useAuth } from '../contexts/AuthContext.tsx';
 
 const LoginForm: React.FC = () => {
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
+  const { login, user } = useAuth();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const response = await loginUser({ email, password });
-      toast.success('Login Successful!', response);
+      const response = await login(email, password);
+      toast.success('Login Successful!');
+    } catch (err) {
+      setError('Login failed. Please check your credentials and try again.');
+    }
+  };
 
-
-      if (response.roles == 'Admin') {
-        navigate("/admin");
-      } else if (response.roles == 'User') {
-        navigate("/dashboard");
+  // UseEffect to redirect based on role after user updates
+  useEffect(() => {
+    if (user) {
+      if (user.roles === 'Admin') {
+        navigate('/admin');
+      } else if (user.roles === 'User') {
+        navigate('/dashboard');
       } else {
         alert('Role not recognized. Please contact support.');
       }
-    } catch (error) {
-      setError('Login failed. Please try again.');
-      toast.error('Login failed. Please check your credentials.');
     }
-  };
+  }, [user]);
 
   return (
     <div className="w-full max-w-md mx-auto p-6">

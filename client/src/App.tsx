@@ -16,12 +16,14 @@ import Header from './components/header.tsx';
 import { AuthProvider } from './contexts/AuthContext.tsx';
 import { LoanProvider } from './contexts/LoanContext.tsx';
 import { TransactionProvider } from './contexts/TransactionContext.tsx';
+import { UserProvider } from './contexts/UserContext.tsx';
 
 const App: React.FC = () => {
   return (
-    <AuthProvider>
-      <LoanProvider>
-        <TransactionProvider>
+  <AuthProvider>
+    <LoanProvider>
+      <TransactionProvider>
+        <UserProvider>
           <BrowserRouter>
             <div className="min-h-screen bg-gray-50">
               <Header />
@@ -42,9 +44,10 @@ const App: React.FC = () => {
               </main>
             </div>
           </BrowserRouter>
-        </TransactionProvider>
-      </LoanProvider>
-    </AuthProvider>
+        </UserProvider>
+      </TransactionProvider>
+    </LoanProvider>
+  </AuthProvider>
   );
 };
 

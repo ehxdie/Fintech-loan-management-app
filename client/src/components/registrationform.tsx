@@ -1,6 +1,9 @@
 import React, { useState } from 'react';
-import { registerUser } from '../services/authservice.ts';
+// import { registerUser } from '../services/authservice.ts';
 import { User, Mail, Phone, Lock, UserCircle } from 'lucide-react';
+import { toast } from 'react-toastify';
+import { useAuth } from '../contexts/AuthContext.tsx';
+
 
 const RegistrationForm: React.FC = () => {
   const [formData, setFormData] = useState({
@@ -12,6 +15,7 @@ const RegistrationForm: React.FC = () => {
   });
 
   const [error, setError] = useState<string | null>(null);
+   const { register } = useAuth();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -30,12 +34,12 @@ const RegistrationForm: React.FC = () => {
     }
 
     try {
-      console.log(formData);
-      await registerUser(formData);
+      await register(formData);
+      toast.success('Registration Successful')
       alert('Registration Successful!');
       setError('Registration Successful')
     } catch (err) {
-      console.error(err);
+      toast.error(err);
       setError('Registration failed. Please try again.');
     }
   };

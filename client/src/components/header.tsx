@@ -1,13 +1,14 @@
 import React, { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Menu, X, User, LogOut } from 'lucide-react';
-import { user } from '../services/authservice.ts';
+import { useAuth } from '../contexts/AuthContext.tsx';
 
 const Header: React.FC = () => {
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
     const location = useLocation();
     const navigate = useNavigate();
+    const { user, logout } = useAuth();
 
     
     const navLinks = !user || user.roles === null ? [] :
@@ -21,7 +22,8 @@ const Header: React.FC = () => {
         ];
 
     const handleLogout = () => {
-        // Logout logic herey
+        // Logout logic here
+        logout();
         navigate('/');
     };
 
@@ -37,7 +39,7 @@ const Header: React.FC = () => {
                     </div>
 
                     {/* Desktop Navigation */}
-                    {user.roles !== null && (
+                    {user && user.roles !== null && (
                         <>
                             <nav className="hidden md:flex space-x-8">
                                 {navLinks.map((link) => (
@@ -95,7 +97,7 @@ const Header: React.FC = () => {
             </div>
 
             {/* Mobile menu */}
-            {isMobileMenuOpen && user.roles !== null && (
+            {isMobileMenuOpen && user && user.roles !== null && (
                 <div className="md:hidden">
                     <div className="pt-2 pb-3 space-y-1">
                         {navLinks.map((link) => (

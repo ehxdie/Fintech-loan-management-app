@@ -19,7 +19,7 @@ interface Loan {
   updatedAt: string; // ISO string for LocalDateTime
 }
 
-export interface Transaction {
+interface Transaction {
   id: number;
   userId: number; // Assuming `User` is referenced by ID
   loanId: number; // Assuming `Loan` is referenced by ID

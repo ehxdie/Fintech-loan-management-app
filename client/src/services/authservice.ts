@@ -4,21 +4,22 @@ import axios from 'axios';
 const API_URL = 'http://localhost:8080/api'; // Base API URL
 
 
-type User = {
-    name: string;
-    email: string;
-    roles: string | null;
-};
+// type User = {
+//     name: string;
+//     email: string;
+//     roles: string | null;
+// };
 
-export let user: User = { name: '', email: '', roles: null };
+// export let user: User = { name: '', email: '', roles: null };
 
 export const loginUser = async (credentials: { email: string; password: string }) => {
 
     try {
         const response = await axios.post(`${API_URL}/auth/login`, credentials);
-        const { name, email, roles } = response.data;
-        user = { name, email, roles };
-        console.log('Logged in user:', user);
+        // const { name, email, roles } = response.data;
+        // console.log(response.data);
+        // user = { name, email, roles };
+        // console.log('Logged in user:', user);
         return response.data;
     } catch (error) {
         if (axios.isAxiosError(error)) {
